@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CP身份随机抽取小游戏 - 蓝色与绿色主题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background-color: rgba(255, 255, 255, 0.92);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 30px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        h1 {
+            color: #3498db;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .cp-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 40px 0;
+            position: relative;
+        }
+        
+        .cp-card {
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 700px;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(52, 152, 219, 0.1);
+        }
+        
+        .cp-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+        }
+        
+        .cp-name {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #444;
+            font-weight: 700;
+        }
+        
+        .cp-name span.role-a {
+            color: #3498db;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cp-name span.role-b {
+            color: #2ecc71;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .roles-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .role-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px 20px;
+            width: 250px;
+            text-align: center;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .role-title {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .role-name {
+            font-size: 1.8rem;
+            color: #3498db;
+            font-weight: 700;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: rgba(52, 152, 219, 0.08);
+            word-break: break-word;
+        }
+        
+        .role-name.person-b {
+            color: #2ecc71;
+            background-color: rgba(46, 204, 113, 0.08);
+        }
+        
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .draw-btn {
+            padding: 16px 35px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .draw-btn-a {
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            color: white;
+        }
+        
+        .draw-btn-b {
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+            color: white;
+        }
+        
+        .draw-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .draw-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .draw-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .draw-both-btn {
+            background: linear-gradient(90deg, #9b59b6, #8e44ad);
+            color: white;
+        }
+        
+        .control-panel {
+            background-color: #f9f9f9;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 40px;
+            border: 1px solid #eee;
+        }
+        
+        .panel-title {
+            color: #555;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .roles-edit {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .role-list {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .role-list h3 {
+            color: #3498db;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .role-list-b h3 {
+            color: #2ecc71;
+        }
+        
+        .role-input {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        
+        .role-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px 0 0 8px;
+            font-size: 1rem;
+        }
+        
+        .role-input button {
+            background-color: #ddd;
+            border: 1px solid #ddd;
+            border-left: none;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            padding: 0 15px;
+            color: #555;
+            transition: background-color 0.2s;
+        }
+        
+        .role-input button:hover {
+            background-color: #ccc;
+        }
+        
+        .role-items {
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            background-color: white;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+        
+        .role-item {
+            padding: 10px;
+            background-color: #f8f8f8;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .role-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .role-item button {
+            background: none;
+            border: none;
+            color: #ff6b8b;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .cp-names-input {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .name-input {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .name-input label {
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .name-input input {
+            padding: 12px 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            text-align: center;
+            width: 200px;
+            transition: border-color 0.3s;
+        }
+        
+        .name-input input:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        
+        .name-input-b input:focus {
+            border-color: #2ecc71;
+        }
+        
+        .heart-divider {
+            font-size: 2rem;
+            color: #9b59b6;
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #888;
+            font-size: 0.9rem;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .history-section {
+            margin-top: 25px;
+        }
+        
+        .history-btn {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        
+        .history-btn:hover {
+            background-color: #5a6268;
+        }
+        
+        .history-list {
+            max-height: 150px;
+            overflow-y: auto;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: white;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            display: none;
+        }
+        
+        .history-list.active {
+            display: block;
+        }
+        
+        .history-item {
+            padding: 8px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.95rem;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        /* 动画效果 */
+        @keyframes drawAnimation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .draw-animation {
+            animation: drawAnimation 0.5s ease;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .cp-card {
+                padding: 20px;
+            }
+            
+            .cp-name {
+                font-size: 1.8rem;
+            }
+            
+            .role-card {
+                width: 100%;
+                max-width: 250px;
+            }
+            
+            .buttons-container {
+                gap: 15px;
+            }
+            
+            .draw-btn {
+                padding: 14px 25px;
+                font-size: 1.1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .cp-name {
+                font-size: 1.6rem;
+            }
+            
+            .role-name {
+                font-size: 1.5rem;
+            }
+            
+            .buttons-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .draw-btn {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-heart"></i> CP身份随机抽取</h1>
+            <p class="subtitle">为你的CP随机抽取不同的身份组合，创造有趣的角色扮演场景！可以自定义身份库和CP名字。</p>
+        </header>
+        
+        <div class="cp-names-input">
+            <div class="name-input">
+                <label for="person-a-name" style="color: #3498db;">角色A名称 (蓝色)</label>
+                <input type="text" id="person-a-name" value="小明" maxlength="10">
+            </div>
+            <div class="name-input name-input-b">
+                <label for="person-b-name" style="color: #2ecc71;">角色B名称 (绿色)</label>
+                <input type="text" id="person-b-name" value="小红" maxlength="10">
+            </div>
+        </div>
+        
+        <div class="cp-display">
+            <div class="cp-card">
+                <div class="cp-name">
+                    <span id="display-person-a" class="role-a">小明</span> × <span id="display-person-b" class="role-b">小红</span>
+                </div>
+                
+                <div class="heart-divider">
+                    <i class="fas fa-heart"></i>
+                </div>
+                
+                <div class="roles-container">
+                    <div class="role-card">
+                        <div class="role-title" style="color: #3498db;">角色A的身份 (蓝色)</div>
+                        <div class="role-name" id="role-a">等待抽取</div>
+                    </div>
+                    
+                    <div class="role-card">
+                        <div class="role-title" style="color: #2ecc71;">角色B的身份 (绿色)</div>
+                        <div class="role-name person-b" id="role-b">等待抽取</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="buttons-container">
+            <button class="draw-btn draw-btn-a" id="draw-a">
+                <i class="fas fa-user"></i> 抽取角色A身份
+            </button>
+            
+            <button class="draw-btn draw-both-btn" id="draw-both">
+                <i class="fas fa-random"></i> 同时抽取
+            </button>
+            
+            <button class="draw-btn draw-btn-b" id="draw-b">
+                <i class="fas fa-user"></i> 抽取角色B身份
+            </button>
+        </div>
+        
+        <div class="control-panel">
+            <div class="panel-title">
+                <i class="fas fa-edit"></i> 身份库编辑
+            </div>
+            
+            <div class="roles-edit">
+                <div class="role-list">
+                    <h3><i class="fas fa-user-tie"></i> 角色A身份库 (蓝色)</h3>
+                    <div class="role-input">
+                        <input type="text" id="new-role-a" placeholder="添加新身份，如：霸道总裁">
+                        <button id="add-role-a">添加</button>
+                    </div>
+                    <div class="role-items" id="roles-a-list">
+                        <!-- 角色A身份列表将通过JS动态生成 -->
+                    </div>
+                </div>
+                
+                <div class="role-list role-list-b">
+                    <h3><i class="fas fa-user-tie"></i> 角色B身份库 (绿色)</h3>
+                    <div class="role-input">
+                        <input type="text" id="new-role-b" placeholder="添加新身份，如：可爱助理">
+                        <button id="add-role-b">添加</button>
+                    </div>
+                    <div class="role-items" id="roles-b-list">
+                        <!-- 角色B身份列表将通过JS动态生成 -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="history-section">
+                <button class="history-btn" id="toggle-history">
+                    <i class="fas fa-history"></i> 查看抽取历史
+                </button>
+                <div class="history-list" id="history-list">
+                    <!-- 历史记录将通过JS动态生成 -->
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>CP身份抽取器 | 角色A使用蓝色主题，角色B使用绿色主题 | 刷新页面不会丢失数据</p>
+        </footer>
+    </div>
+
+    <script>
+        // 初始身份数据
+        let rolesA = ["霸道总裁", "温柔学长", "高冷医生", "电竞大神", "神秘特工", "古代王爷", "天才画家", "摇滚歌手", "吸血鬼贵族", "星际舰长"];
+        let rolesB = ["可爱助理", "傲娇学妹", "俏皮护士", "游戏主播", "特工搭档", "穿越王妃", "艺术模特", "乐队主唱", "人类少女", "外星公主"];
+        
+        // 抽取历史
+        let drawHistory = [];
+        
+        // 从本地存储加载数据
+        function loadData() {
+            const savedRolesA = localStorage.getItem('cpRolesA');
+            const savedRolesB = localStorage.getItem('cpRolesB');
+            const savedHistory = localStorage.getItem('cpDrawHistory');
+            const savedNameA = localStorage.getItem('cpNameA');
+            const savedNameB = localStorage.getItem('cpNameB');
+            
+            if (savedRolesA) rolesA = JSON.parse(savedRolesA);
+            if (savedRolesB) rolesB = JSON.parse(savedRolesB);
+            if (savedHistory) drawHistory = JSON.parse(savedHistory);
+            if (savedNameA) document.getElementById('person-a-name').value = savedNameA;
+            if (savedNameB) document.getElementById('person-b-name').value = savedNameB;
+            
+            updateDisplayNames();
+        }
+        
+        // 保存数据到本地存储
+        function saveData() {
+            localStorage.setItem('cpRolesA', JSON.stringify(rolesA));
+            localStorage.setItem('cpRolesB', JSON.stringify(rolesB));
+            localStorage.setItem('cpDrawHistory', JSON.stringify(drawHistory));
+            localStorage.setItem('cpNameA', document.getElementById('person-a-name').value);
+            localStorage.setItem('cpNameB', document.getElementById('person-b-name').value);
+        }
+        
+        // 更新显示的CP名称
+        function updateDisplayNames() {
+            const nameA = document.getElementById('person-a-name').value || '角色A';
+            const nameB = document.getElementById('person-b-name').value || '角色B';
+            
+            document.getElementById('display-person-a').textContent = nameA;
+            document.getElementById('display-person-b').textContent = nameB;
+        }
+        
+        // 渲染身份列表
+        function renderRoleLists() {
+            const rolesAList = document.getElementById('roles-a-list');
+            const rolesBList = document.getElementById('roles-b-list');
+            
+            rolesAList.innerHTML = '';
+            rolesBList.innerHTML = '';
+            
+            rolesA.forEach((role, index) => {
+                const roleItem = document.createElement('div');
+                roleItem.className = 'role-item';
+                roleItem.innerHTML = `
+                    <span>${role}</span>
+                    <button class="delete-role-a" data-index="${index}">×</button>
+                `;
+                rolesAList.appendChild(roleItem);
+            });
+            
+            rolesB.forEach((role, index) => {
+                const roleItem = document.createElement('div');
+                roleItem.className = 'role-item';
+                roleItem.innerHTML = `
+                    <span>${role}</span>
+                    <button class="delete-role-b" data-index="${index}">×</button>
+                `;
+                rolesBList.appendChild(roleItem);
+            });
+            
+            // 添加删除事件监听
+            document.querySelectorAll('.delete-role-a').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    rolesA.splice(index, 1);
+                    renderRoleLists();
+                    saveData();
+                });
+            });
+            
+            document.querySelectorAll('.delete-role-b').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    rolesB.splice(index, 1);
+                    renderRoleLists();
+                    saveData();
+                });
+            });
+        }
+        
+        // 随机抽取身份
+        function drawRole(roleArray) {
+            if (roleArray.length === 0) return "无可用身份";
+            const randomIndex = Math.floor(Math.random() * roleArray.length);
+            return roleArray[randomIndex];
+        }
+        
+        // 执行抽取并显示结果
+        function performDraw(target, roleArray) {
+            const roleElement = document.getElementById(target);
+            
+            // 禁用按钮避免连续点击
+            const buttons = document.querySelectorAll('.draw-btn');
+            buttons.forEach(btn => btn.disabled = true);
+            
+            // 清空当前显示
+            roleElement.textContent = "抽取中...";
+            
+            // 模拟抽取过程
+            let counter = 0;
+            const interval = setInterval(() => {
+                if (counter < 10) {
+                    // 快速显示随机身份
+                    const tempRole = roleArray[Math.floor(Math.random() * roleArray.length)] || "无身份";
+                    roleElement.textContent = tempRole;
+                    counter++;
+                } else {
+                    clearInterval(interval);
+                    
+                    // 显示最终结果
+                    const finalRole = drawRole(roleArray);
+                    roleElement.textContent = finalRole;
+                    
+                    // 添加动画效果
+                    roleElement.classList.add('draw-animation');
+                    setTimeout(() => {
+                        roleElement.classList.remove('draw-animation');
+                    }, 500);
+                    
+                    // 启用按钮
+                    buttons.forEach(btn => btn.disabled = false);
+                    
+                    // 记录历史
+                    const personA = document.getElementById('person-a-name').value || '角色A';
+                    const personB = document.getElementById('person-b-name').value || '角色B';
+                    const roleA = document.getElementById('role-a').textContent;
+                    const roleB = document.getElementById('role-b').textContent;
+                    
+                    if (target === 'role-a' || target === 'role-b') {
+                        const historyEntry = {
+                            time: new Date().toLocaleTimeString(),
+                            cp: `${personA} × ${personB}`,
+                            combination: `${roleA} × ${roleB}`
+                        };
+                        drawHistory.unshift(historyEntry);
+                        
+                        // 只保留最近10条记录
+                        if (drawHistory.length > 10) {
+                            drawHistory.pop();
+                        }
+                        
+                        saveData();
+                        renderHistory();
+                    }
+                }
+            }, 80);
+        }
+        
+        // 渲染历史记录
+        function renderHistory() {
+            const historyList = document.getElementById('history-list');
+            historyList.innerHTML = '';
+            
+            if (drawHistory.length === 0) {
+                historyList.innerHTML = '<div class="history-item">暂无抽取历史</div>';
+                return;
+            }
+            
+            drawHistory.forEach(entry => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <div><strong>${entry.cp}</strong></div>
+                    <div>${entry.combination}</div>
+                    <div style="font-size:0.8rem;color:#888;">${entry.time}</div>
+                `;
+                historyList.appendChild(historyItem);
+            });
+        }
+        
+        // 初始化
+        function init() {
+            // 加载数据
+            loadData();
+            
+            // 渲染初始身份列表
+            renderRoleLists();
+            
+            // 渲染历史记录
+            renderHistory();
+            
+            // 绑定事件监听器
+            document.getElementById('draw-a').addEventListener('click', () => {
+                if (rolesA.length === 0) {
+                    alert('请先为角色A添加身份');
+                    return;
+                }
+                performDraw('role-a', rolesA);
+            });
+            
+            document.getElementById('draw-b').addEventListener('click', () => {
+                if (rolesB.length === 0) {
+                    alert('请先为角色B添加身份');
+                    return;
+                }
+                performDraw('role-b', rolesB);
+            });
+            
+            document.getElementById('draw-both').addEventListener('click', () => {
+                if (rolesA.length === 0 || rolesB.length === 0) {
+                    alert('请确保两个角色都有身份可供抽取');
+                    return;
+                }
+                performDraw('role-a', rolesA);
+                performDraw('role-b', rolesB);
+            });
+            
+            document.getElementById('add-role-a').addEventListener('click', () => {
+                const input = document.getElementById('new-role-a');
+                const newRole = input.value.trim();
+                if (newRole) {
+                    rolesA.push(newRole);
+                    renderRoleLists();
+                    saveData();
+                    input.value = '';
+                }
+            });
+            
+            document.getElementById('add-role-b').addEventListener('click', () => {
+                const input = document.getElementById('new-role-b');
+                const newRole = input.value.trim();
+                if (newRole) {
+                    rolesB.push(newRole);
+                    renderRoleLists();
+                    saveData();
+                    input.value = '';
+                }
+            });
+            
+            // 允许按Enter键添加身份
+            document.getElementById('new-role-a').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    document.getElementById('add-role-a').click();
+                }
+            });
+            
+            document.getElementById('new-role-b').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    document.getElementById('add-role-b').click();
+                }
+            });
+            
+            // CP名称输入监听
+            document.getElementById('person-a-name').addEventListener('input', () => {
+                updateDisplayNames();
+                saveData();
+            });
+            
+            document.getElementById('person-b-name').addEventListener('input', () => {
+                updateDisplayNames();
+                saveData();
+            });
+            
+            // 历史记录切换
+            document.getElementById('toggle-history').addEventListener('click', () => {
+                const historyList = document.getElementById('history-list');
+                historyList.classList.toggle('active');
+                
+                const toggleBtn = document.getElementById('toggle-history');
+                if (historyList.classList.contains('active')) {
+                    toggleBtn.innerHTML = '<i class="fas fa-history"></i> 隐藏抽取历史';
+                } else {
+                    toggleBtn.innerHTML = '<i class="fas fa-history"></i> 查看抽取历史';
+                }
+            });
+            
+            // 初始抽取示例
+            setTimeout(() => {
+                if (rolesA.length > 0 && rolesB.length > 0) {
+                    document.getElementById('role-a').textContent = rolesA[0];
+                    document.getElementById('role-b').textContent = rolesB[0];
+                }
+            }, 500);
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
